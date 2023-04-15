@@ -1,33 +1,41 @@
 #include "cub3d.h"
 
-//fonction de tracage de ligne
-
-void	draw_line(t_s *s, int x0, int y0, int x1, int y1)
+t_xpm textures_init(t_s *s, char *path)
 {
-  int dx =  abs (x1 - x0);
-  int sx = x0 < x1 ? 1 : -1;
-  int dy = -abs (y1 - y0);
-  int sy = y0 < y1 ? 1 : -1; 
-  int err = dx + dy, e2;
- 
-  for (;;)
-  {
-	if (x0 >= 0 && x0 < SCREEN_WIDTH && y0 >= 0 && y0 < SCREEN_HEIGHT)
-		my_mlx_pixel_put(s->img, x0, y0, s->p->color);
-    if (x0 == x1 && y0 == y1) 
-		break;
-    e2 = 2 * err;
-    if (e2 >= dy)
+    t_xpm sprite;
+    sprite.img = mlx_xpm_file_to_image(s->p->mlx, path, &sprite.width, &sprite.height);
+    sprite.addr = mlx_get_data_addr(sprite.img, &sprite.bits_per_pixel, &sprite.line_length, &sprite.endian);
+    return (sprite);
+}
+
+//fonction d'aatribution de la couleur du pixel sur la texture
+
+unsigned int get_wall_face_color(t_s *s, char wall_face, int x, int y)
+{
+    int texture_idx = -1;
+
+	if (wall_face == 'N')
 	{
-		err += dy;
-		x0 += sx;
+		texture_idx = 0;
 	}
-    if (e2 <= dx)
+	else if (wall_face == 'S')
 	{
-		err += dx;
-		y0 += sy;
+		texture_idx = 1;
 	}
-  }
+	else if (wall_face == 'E')
+	{
+		texture_idx = 2;
+	}
+	else if (wall_face == 'W')
+	{
+		texture_idx = 3;
+	}
+    else if (texture_idx == -1) 
+		return 0xFFFFFF;
+    t_xpm *texture = &s->xpm[texture_idx];
+    if (x < 0 || x >= texture->width || y < 0 || y >= texture->height) 
+		return 0;
+    return *(unsigned int *)(texture->addr + (y * texture->line_length + x * (texture->bits_per_pixel / 8)));
 }
 
 //fonction de déplacement de la caméra
@@ -47,32 +55,19 @@ float getCorrectedDistance(float distance, float angle)
     return correctedDistance;
 }
 
-//fonction d'attribution de couleur en fonction de la face
-
-void setWallFaceColor(t_s *s, char wallFace)
-{
-    int color;
-    if (wallFace == 'N')
-    	color = 0xFF0000;
-	else if (wallFace == 'S')
-		color = 0x0000FF;
-	else if (wallFace == 'E')
-		color = 0x00FF00;
-	else if (wallFace == 'W')
-		color = 0xFFFF00;
-	else
-		color = 0xFFFFFF;
-    s->p->color = color;
-}
-
 //fonction génerale du raycast
 
 void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
 {
-    float rayAngle;
+    const float inv_num_rays = 1.0f / NUM_RAYS;
+    const int half_screen_height = SCREEN_HEIGHT / 2;
+
+    const float fov_offset = FOV / 2.0;
+    const float fov_times_inv_num_rays = FOV * inv_num_rays;
+
     for (int i = 0; i < NUM_RAYS; i++)
-	{
-        rayAngle = (camera->dir.x - FOV / 2.0) + ((float)i / NUM_RAYS) * FOV;
+    {
+        float rayAngle = (camera->dir.x - fov_offset) + ((float)i * fov_times_inv_num_rays);
         ray_t ray = { 0 };
         int mapX = (int)camera->pos.x;
         int mapY = (int)camera->pos.y;
@@ -85,68 +80,103 @@ void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
         int stepX;
         int stepY;
         if (eyeX < 0)
-		{
+        {
             stepX = -1;
             sideDistX = (camera->pos.x - mapX) * deltaDistX;
         }
-		else
-		{
+        else
+        {
             stepX = 1;
             sideDistX = (mapX + 1.0 - camera->pos.x) * deltaDistX;
         }
         if (eyeY < 0)
-		{
+        {
             stepY = -1;
             sideDistY = (camera->pos.y - mapY) * deltaDistY;
         }
-		else
-		{
+        else
+        {
             stepY = 1;
             sideDistY = (mapY + 1.0 - camera->pos.y) * deltaDistY;
         }
         int hit = 0;
         while (!hit)
-		{
+        {
             if (sideDistX < sideDistY)
-			{
+            {
                 sideDistX += deltaDistX;
                 mapX += stepX;
-				if (stepX == 1)
-					ray.wallFace = 'E';
-				else
-					ray.wallFace = 'W';
+                if (stepX == 1)
+                    ray.wallFace = 'E';
+                else
+                    ray.wallFace = 'W';
             }
-			else
-			{
+            else
+            {
                 sideDistY += deltaDistY;
                 mapY += stepY;
-				if (stepY == 1)
-					ray.wallFace = 'N';
-				else
-					ray.wallFace = 'S';
+                if (stepY == 1)
+                    ray.wallFace = 'N';
+                else
+                    ray.wallFace = 'S';
             }
             if (map[mapY][mapX] == '1')
-			{
+            {
                 hit = 1;
             }
         }
+
         float perpWallDist;
         if (ray.wallFace == 'E' || ray.wallFace == 'W')
-		{
+        {
             perpWallDist = (mapX - camera->pos.x + (1 - stepX) / 2) / eyeX;
         }
-		else
-		{
+        else
+        {
             perpWallDist = (mapY - camera->pos.y + (1 - stepY) / 2) / eyeY;
         }
         ray.distance = perpWallDist;
         int wallHeight = (int)((float)SCREEN_HEIGHT / getCorrectedDistance(ray.distance, rayAngle - camera->dir.x));
-        int drawStart = -wallHeight / 2 + SCREEN_HEIGHT / 2;
-        int drawEnd = wallHeight / 2 + SCREEN_HEIGHT / 2;
-        setWallFaceColor(s, ray.wallFace);
-		draw_line(s, i, drawStart, i, drawEnd);
+        int halfWallHeight = wallHeight / 2;
+        int drawStart = -halfWallHeight + half_screen_height;
+        int drawEnd = halfWallHeight + half_screen_height;
+        int lineHeight = drawEnd - drawStart;
+        float wallX;
+        if (ray.wallFace == 'N' || ray.wallFace == 'S')
+            wallX = camera->pos.x + perpWallDist * eyeX;
+        else
+            wallX = camera->pos.y + perpWallDist * eyeY;
+
+        wallX -= floor(wallX);
+
+        int texNum;
+        if (ray.wallFace == 'N')
+            texNum = 0;
+        else if (ray.wallFace == 'S')
+            texNum = 1;
+        else if (ray.wallFace == 'W')
+            texNum = 2;
+        else // ray.wallFace == 'E'
+            texNum = 3;
+
+        int texX = (int)(wallX * (float)s->xpm[texNum].width);
+        if (((ray.wallFace == 'N' || ray.wallFace == 'S') && eyeX > 0) ||
+            ((ray.wallFace == 'W' || ray.wallFace == 'E') && eyeY < 0))
+            texX = s->xpm[texNum].width - texX - 1;
+
+        float step = 1.0 * s->xpm[texNum].height / lineHeight;
+        float texPos = (drawStart - half_screen_height + lineHeight / 2) * step;
+
+        for (int j = drawStart; j < drawEnd; j++)
+        {
+            int texY = (int)texPos & (s->xpm[texNum].height - 1);
+            texPos += step;
+            s->p->color = get_wall_face_color(s, ray.wallFace, texX, texY);
+            my_mlx_pixel_put(s->img, i, j, s->p->color);
+        }
     }
 }
+
 
 //fonction pour mettre les variable de t_s dans les variables spécifiques au raycast
 
@@ -154,6 +184,6 @@ void	cast_rays(t_s *s)
 {
 	int mapWidth = s->map->map_len;
 	int mapHeight = s->map->map_lenght;
-	camera_t camera = { { s->player->y / 20, s->player->x / 20 }, { s->player->player_angle, -1.0 } };
+	camera_t camera = { { s->player->y / TILE_SIZE, s->player->x / TILE_SIZE }, { s->player->player_angle, -1.0 } };
 	render(&camera, s->map->map, mapWidth, mapHeight, s);
 }

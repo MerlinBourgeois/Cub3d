@@ -6,17 +6,30 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 21:15:42 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/04/13 01:39:37 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/15 10:52:20 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
+void	load_textures(t_s *s)
+{
+	s->xpm = malloc(4 * sizeof(t_xpm));
+	s->map->north_texture = "backroom_texture.xpm";
+	s->map->south_texture = "backroom_texture.xpm";
+	s->map->east_texture = "backroom_texture.xpm";
+	s->map->west_texture = "backroom_texture.xpm";
+	s->xpm[0] = textures_init(s, s->map->north_texture);
+	s->xpm[1] = textures_init(s, s->map->south_texture);
+	s->xpm[2] = textures_init(s, s->map->east_texture);
+	s->xpm[3] = textures_init(s, s->map->west_texture);
+}
+
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
-	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / BITS_PER_BYTE));
 	*(unsigned int*)dst = color;
 }
 
@@ -162,11 +175,15 @@ void	better_minimap(t_s *s)
 	int fill_minimap_x;
 	int fill_minimap_y;
 	t_path_return *co;
+	float x_tile_size;
+	float y_tile_size;
 
 	x = 0;
 	y = 0;
 	yo = 0;
 	xo = 0;
+	x_tile_size = s->player->x / TILE_SIZE;
+	y_tile_size = s->player->y / TILE_SIZE;
 	s->map->def_y = MINIMAP_X;
 	s->map->def_x = MINIMAP_Y;
 	//BONUS fonction d'appel du path finding
@@ -208,7 +225,7 @@ void	better_minimap(t_s *s)
 			{
 				s->p->color = 0x629cc5;
 			}
-			draw_square_minimap(s, (y - (s->player->x)/ 20) * 20 + s->map->def_x, (x - (s->player->y) / 20)* 20 + s->map->def_y, 20, 20);
+			draw_square_minimap(s, (y - x_tile_size) * TILE_SIZE + s->map->def_x, (x - y_tile_size)* TILE_SIZE + s->map->def_y, TILE_SIZE, TILE_SIZE);
 			x++;
 		}
 		y++;
@@ -221,12 +238,12 @@ void	better_minimap(t_s *s)
 		s->p->color = 0x333333;
 		if (i != co->moves - 1)
 		{
-			draw_big_line(s, (co->x[i] - s->player->y / 20)* 20 + 10 + s->map->def_y , (co->y[i] - s->player->x / 20) * 20 + 10 + s->map->def_x, (co->x[i + 1] - s->player->y / 20) * 20 + 10 + s->map->def_y, (co->y[i + 1] - s->player->x / 20) * 20 + 10 + s->map->def_x, 8);
+			draw_big_line(s, (co->x[i] - y_tile_size)* TILE_SIZE + 10 + s->map->def_y , (co->y[i] - x_tile_size) * TILE_SIZE + 10 + s->map->def_x, (co->x[i + 1] - y_tile_size) * TILE_SIZE + 10 + s->map->def_y, (co->y[i + 1] - x_tile_size) * TILE_SIZE + 10 + s->map->def_x, 8);
 		}
 		if (i == 0)
 		{
 			s->p->color = 0xaa8085;
-			draw_square_minimap(s, (co->y[i] - s->player->x / 20) * 20 + s->map->def_x, (co->x[i] - s->player->y / 20) * 20 + s->map->def_y, 20, 20);
+			draw_square_minimap(s, (co->y[i] - x_tile_size) * TILE_SIZE + s->map->def_x, (co->x[i] - y_tile_size) * TILE_SIZE + s->map->def_y, TILE_SIZE, TILE_SIZE);
 		}
 		i++;
 	}
@@ -236,7 +253,7 @@ void	better_minimap(t_s *s)
 	int j;
 
 	i = 0;
-	if (s->map->map[(int)(s->player->x / 20)][(int)(s->player->y / 20)] == '0')
+	if (s->map->map[(int)x_tile_size][(int)y_tile_size] == '0')
 	{
 		while (i != s->map->map_lenght)
 		{
@@ -249,7 +266,7 @@ void	better_minimap(t_s *s)
 			}
 			i++;
 		}
-		s->map->map[(int)(s->player->x / 20)][(int)(s->player->y / 20)] = 'N';
+		s->map->map[(int)(x_tile_size)][(int)(y_tile_size)] = 'N';
 	}
 	s->p->color = 0x0FFFFF0;
 	draw_circle(s, (s->map->def_x), (s->map->def_y), 5, 0xFFFFFFFF);
@@ -267,7 +284,7 @@ void	display_ceiling_floor(t_data img, void *mlx, t_map *map)
 	int j;
 
 	i = 0;
-	while (i < SCREEN_HEIGHT / 2)
+	while (i < SCREEN_HEIGHT_1)
 	{
 		j = 0;
 		while (j < SCREEN_WIDTH)
@@ -312,21 +329,23 @@ void	ft_allocate_struct(t_s *s)
 int	key_hook(int keycode, t_s *s)
 {
 	if (keycode == 53)
-		exit(0);
-	if (keycode == EAST)
 	{
-		s->player->player_angle -= PI / 30;
+		//system("leaks cub3D");
+		exit(0);
+	}
+	else if (keycode == EAST)
+	{
+		s->player->player_angle -= PI / 60;
 		if (s->player->player_angle < 0)
 		{
 			s->player->player_angle = 2 * PI;
 		}
 		s->player->delta_x = (cos(s->player->player_angle) * 5);
 		s->player->delta_y = (sin(s->player->player_angle) * 5);
-
 	}
-	if (keycode == WEST)
+	else if (keycode == WEST)
 	{
-		s->player->player_angle += PI / 30;
+		s->player->player_angle += PI / 60;
 		if (s->player->player_angle > 2 * PI)
 		{
 			s->player->player_angle = 0;
@@ -334,12 +353,12 @@ int	key_hook(int keycode, t_s *s)
 		s->player->delta_x = (cos(s->player->player_angle) * 5);
 		s->player->delta_y = (sin(s->player->player_angle) * 5);
 	}
-	if (keycode == NORTH)
+	else if (keycode == NORTH)
 	{
 		s->player->x += s->player->delta_x;
 		s->player->y += s->player->delta_y;
 	}
-	if (keycode == SOUTH)
+	else if (keycode == SOUTH)
 	{
 		s->player->x -= s->player->delta_x;
 		s->player->y -= s->player->delta_y;
@@ -349,7 +368,7 @@ int	key_hook(int keycode, t_s *s)
 
 int	paint_frame(t_s *s)
 {
-	clear_window(s);
+	//clear_window(s);
 	s->player->delta_x = cos(s->player->player_angle) * 5;
 	s->player->delta_y = sin(s->player->player_angle) * 5;
 	display_ceiling_floor(*s->img, s->p, s->map);
@@ -368,7 +387,7 @@ void	display_window(t_map *map)
 	ft_allocate_struct(&s);
 	s.player->x = map->def_x;
 	s.player->y = map->def_y;
-	s.player->player_angle = PI / 2;
+	s.player->player_angle = M_PI_2;
 	printf("x : %f, y : %f\n", s.player->x, s.player->y);
 	if (s.map->map_len > s.map->map_lenght)
 	{
@@ -382,6 +401,7 @@ void	display_window(t_map *map)
 	s.img->img = mlx_new_image(s.p->mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 	s.img->addr = mlx_get_data_addr(s.img->img, &s.img->bits_per_pixel, &s.img->line_length,
 								&s.img->endian);
+	load_textures(&s);
 	mlx_hook(s.p->mlx_win, 2, 1L<<0, key_hook, &s);
 	mlx_loop_hook(s.p->mlx, paint_frame, &s);
 	mlx_loop(s.p->mlx);

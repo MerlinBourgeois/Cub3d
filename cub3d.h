@@ -17,13 +17,17 @@
 */
 
 # define SCREEN_HEIGHT 700
+# define SCREEN_HEIGHT_1 SCREEN_HEIGHT / 2
 # define SCREEN_WIDTH 1200
 # define TITLE_SCREEN "Cub3D"
 # define MAX_FPS 60
 # define MINIMAP_X 170
 # define MINIMAP_Y 170
+# define BITS_PER_BYTE 8
 
-#define FOV M_PI/3.0
+# define TILE_SIZE 20
+
+#define FOV M_2_SQRTPI
 #define NUM_RAYS SCREEN_WIDTH
 
 /*
@@ -94,6 +98,22 @@ typedef struct s_mlx
 }	t_mlx;
 
 /*
+*	structure de gestion des textures
+*/
+
+typedef struct	s_xpm
+{
+	void	*img;
+	char	*addr;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+	int		width;
+	int		height;
+}	t_xpm;
+
+
+/*
 *	structure de gestion de l'image génerale imprimée
 */
 
@@ -155,6 +175,7 @@ typedef struct	s_s
 	t_map	*map;
 	t_mlx	*p;
 	t_player *player;
+	t_xpm	*xpm;
 }	t_s;
 
 
@@ -316,5 +337,6 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 */
 
 void	cast_rays(t_s *s);
+t_xpm	textures_init(t_s *s, char *path);
 
 #endif
