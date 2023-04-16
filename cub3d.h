@@ -20,7 +20,7 @@
 # define SCREEN_HEIGHT_1 SCREEN_HEIGHT / 2
 # define SCREEN_WIDTH 1200
 # define TITLE_SCREEN "Cub3D"
-# define MAX_FPS 60
+# define MAX_FPS 100
 # define MINIMAP_X 170
 # define MINIMAP_Y 170
 # define BITS_PER_BYTE 8
@@ -33,6 +33,8 @@
 /*
 *	Macros de gestion mathematique
 */
+
+#define COLLISION_MARGIN 0.00001f
 
 # define PI 3.141592
 # define CASTED_RAYS 1400
@@ -52,6 +54,9 @@
 # include "includes/lib/mlx/mlx.h"
 # include "includes/lib/Libft/libft.h"
 # include "includes/lib/Libft/get_next_line.h"
+# include <time.h>
+#include <sys/time.h>
+#include <stdbool.h>
 
 typedef enum e_directions
 {
@@ -63,6 +68,18 @@ typedef enum e_directions
 }	t_directions;
 
 /*
+*	structure de gestion des event clavier
+*/
+
+typedef struct s_key_states
+{
+    bool east;
+    bool west;
+    bool north;
+    bool south;
+} t_key_states;
+
+/*
 *	structure de gestion du raycasting
 */
 
@@ -72,6 +89,8 @@ typedef struct s_ray
     float dx, dy; // Direction du rayon (vecteur unitaire)
     float maxDistance; // Distance maximale que peut parcourir le rayon
 } t_ray;
+
+
 
 /*
 *	structure de gestion du joueur
@@ -175,7 +194,11 @@ typedef struct	s_s
 	t_map	*map;
 	t_mlx	*p;
 	t_player *player;
+	t_key_states key_states;
 	t_xpm	*xpm;
+	long long start_time;
+	float delta_time;
+	float rotation_speed;
 }	t_s;
 
 

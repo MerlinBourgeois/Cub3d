@@ -167,12 +167,13 @@ void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
         float step = 1.0 * s->xpm[texNum].height / lineHeight;
         float texPos = (drawStart - half_screen_height + lineHeight / 2) * step;
 
-        for (int j = drawStart; j < drawEnd; j++)
+        for (int j = drawStart; j < drawEnd; j++ && drawEnd > 0 && drawStart > 0 && j < SCREEN_HEIGHT)
         {
             int texY = (int)texPos & (s->xpm[texNum].height - 1);
             texPos += step;
-            s->p->color = get_wall_face_color(s, ray.wallFace, texX, texY);
-            my_mlx_pixel_put(s->img, i, j, s->p->color);
+            s->p->color = get_wall_face_color(s, ray.wallFace, abs(texX), abs(texY));
+			//printf("color : %x\nx : %d, y : %d\n", s->p->color, i, j);
+            my_mlx_pixel_put(s->img, abs(i), abs(j), s->p->color);
         }
     }
 }

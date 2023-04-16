@@ -18,7 +18,7 @@ SRC =	main.c \
 
 OBJ = ${SRC:.c=.o}
 
-CFLAGS = -arch arm64 -finline-functions -fvectorize -fslp-vectorize -ffast-math -falign-functions -funroll-loops -fstrict-aliasing -fomit-frame-pointer -flto -Ofast -O1 -O2 -Os -O3 #-g #-fsanitize=address -g
+CFLAGS = -arch arm64 -finline-functions -fvectorize -fslp-vectorize -ffast-math -falign-functions -funroll-loops -fstrict-aliasing -fomit-frame-pointer -flto -Ofast -O1 -O2 -Os -O3 
 
 LIB  = ar rcs $(NAME) ./includes/lib/mlx/libmlx.a ./includes/lib/libft.a
 
