@@ -1,0 +1,175 @@
+.
+├── Makefile
+├── backroom_texture.xpm
+├── ben.xpm
+├── check_file.c
+├── check_file.o
+├── cub3D
+├── cub3d.h
+├── display.c
+├── display.o
+├── error.c
+├── error.o
+├── fgeorgea.jpg
+├── fgeorgea.xpm
+├── ground.xpm
+├── includes
+│   ├── lib
+│   │   ├── Libft
+│   │   │   ├── Makefile
+│   │   │   ├── ft_atoi.c
+│   │   │   ├── ft_atoi.o
+│   │   │   ├── ft_bzero.c
+│   │   │   ├── ft_bzero.o
+│   │   │   ├── ft_calloc.c
+│   │   │   ├── ft_calloc.o
+│   │   │   ├── ft_isalnum.c
+│   │   │   ├── ft_isalnum.o
+│   │   │   ├── ft_isalpha.c
+│   │   │   ├── ft_isalpha.o
+│   │   │   ├── ft_isascii.c
+│   │   │   ├── ft_isascii.o
+│   │   │   ├── ft_isdigit.c
+│   │   │   ├── ft_isdigit.o
+│   │   │   ├── ft_isprint.c
+│   │   │   ├── ft_isprint.o
+│   │   │   ├── ft_itoa.c
+│   │   │   ├── ft_itoa.o
+│   │   │   ├── ft_lstadd_back_bonus.c
+│   │   │   ├── ft_lstadd_back_bonus.o
+│   │   │   ├── ft_lstadd_front_bonus.c
+│   │   │   ├── ft_lstadd_front_bonus.o
+│   │   │   ├── ft_lstclear_bonus.c
+│   │   │   ├── ft_lstclear_bonus.o
+│   │   │   ├── ft_lstdelone_bonus.c
+│   │   │   ├── ft_lstdelone_bonus.o
+│   │   │   ├── ft_lstiter_bonus.c
+│   │   │   ├── ft_lstiter_bonus.o
+│   │   │   ├── ft_lstlast_bonus.c
+│   │   │   ├── ft_lstlast_bonus.o
+│   │   │   ├── ft_lstmap_bonus.c
+│   │   │   ├── ft_lstmap_bonus.o
+│   │   │   ├── ft_lstnew_bonus.c
+│   │   │   ├── ft_lstnew_bonus.o
+│   │   │   ├── ft_lstsize_bonus.c
+│   │   │   ├── ft_lstsize_bonus.o
+│   │   │   ├── ft_memchr.c
+│   │   │   ├── ft_memchr.o
+│   │   │   ├── ft_memcmp.c
+│   │   │   ├── ft_memcmp.o
+│   │   │   ├── ft_memcpy.c
+│   │   │   ├── ft_memcpy.o
+│   │   │   ├── ft_memmove.c
+│   │   │   ├── ft_memmove.o
+│   │   │   ├── ft_memset.c
+│   │   │   ├── ft_memset.o
+│   │   │   ├── ft_putchar_fd.c
+│   │   │   ├── ft_putchar_fd.o
+│   │   │   ├── ft_putendl_fd.c
+│   │   │   ├── ft_putendl_fd.o
+│   │   │   ├── ft_putnbr_fd.c
+│   │   │   ├── ft_putnbr_fd.o
+│   │   │   ├── ft_putstr_fd.c
+│   │   │   ├── ft_putstr_fd.o
+│   │   │   ├── ft_split.c
+│   │   │   ├── ft_split.o
+│   │   │   ├── ft_strchr.c
+│   │   │   ├── ft_strchr.o
+│   │   │   ├── ft_strdup.c
+│   │   │   ├── ft_strdup.o
+│   │   │   ├── ft_striteri.c
+│   │   │   ├── ft_striteri.o
+│   │   │   ├── ft_strjoin.c
+│   │   │   ├── ft_strjoin.o
+│   │   │   ├── ft_strlcat.c
+│   │   │   ├── ft_strlcat.o
+│   │   │   ├── ft_strlcpy.c
+│   │   │   ├── ft_strlcpy.o
+│   │   │   ├── ft_strlen.c
+│   │   │   ├── ft_strlen.o
+│   │   │   ├── ft_strmapi.c
+│   │   │   ├── ft_strmapi.o
+│   │   │   ├── ft_strncmp.c
+│   │   │   ├── ft_strncmp.o
+│   │   │   ├── ft_strnstr.c
+│   │   │   ├── ft_strnstr.o
+│   │   │   ├── ft_strrchr.c
+│   │   │   ├── ft_strrchr.o
+│   │   │   ├── ft_strtrim.c
+│   │   │   ├── ft_strtrim.o
+│   │   │   ├── ft_substr.c
+│   │   │   ├── ft_substr.o
+│   │   │   ├── ft_tolower.c
+│   │   │   ├── ft_tolower.o
+│   │   │   ├── ft_toupper.c
+│   │   │   ├── ft_toupper.o
+│   │   │   ├── get_next_line.c
+│   │   │   ├── get_next_line.h
+│   │   │   ├── get_next_line.o
+│   │   │   ├── get_next_line_utils.c
+│   │   │   ├── get_next_line_utils.o
+│   │   │   ├── libft.a
+│   │   │   └── libft.h
+│   │   └── mlx
+│   │       ├── Makefile
+│   │       ├── font.c
+│   │       ├── font.xcf
+│   │       ├── libmlx.a
+│   │       ├── mlx.h
+│   │       ├── mlx_init_loop.m
+│   │       ├── mlx_init_loop.o
+│   │       ├── mlx_int.h
+│   │       ├── mlx_int_str_to_wordtab.c
+│   │       ├── mlx_int_str_to_wordtab.o
+│   │       ├── mlx_mouse.m
+│   │       ├── mlx_mouse.o
+│   │       ├── mlx_new_image.m
+│   │       ├── mlx_new_image.o
+│   │       ├── mlx_new_window.h
+│   │       ├── mlx_new_window.m
+│   │       ├── mlx_new_window.o
+│   │       ├── mlx_opengl.h
+│   │       ├── mlx_opengl.m
+│   │       ├── mlx_png.c
+│   │       ├── mlx_png.h
+│   │       ├── mlx_png.o
+│   │       ├── mlx_rgb.c
+│   │       ├── mlx_shaders.c
+│   │       ├── mlx_shaders.o
+│   │       ├── mlx_xpm.c
+│   │       └── mlx_xpm.o
+│   └── map
+│       ├── 1.cub
+│       └── 2.cub
+├── main.c
+├── main.o
+├── map_modifier.c
+├── map_modifier.o
+├── output
+├── parsing_map.c
+├── parsing_map.o
+├── path_finding1.c
+├── path_finding1.o
+├── path_finding2.c
+├── path_finding2.o
+├── path_finding3.c
+├── path_finding3.o
+├── path_finding4.c
+├── path_finding4.o
+├── raycast.c
+├── raycast.o
+├── sprite.c
+├── sprite.o
+├── test_b.xpm
+├── tree.txt
+├── utils.c
+├── utils.o
+├── utils_path_finding.c
+├── utils_path_finding.o
+├── verif_map.c
+├── verif_map.o
+├── verif_shape.c
+├── verif_shape.o
+└── wall.xpm
+
+7 directories, 166 files

@@ -57,7 +57,7 @@ float getCorrectedDistance(float distance, float angle)
 
 //fonction génerale du raycast
 
-void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
+void render(camera_t *camera, char **map, t_s *s)
 {
     const float inv_num_rays = 1.0f / NUM_RAYS;
     const int half_screen_height = SCREEN_HEIGHT / 2;
@@ -125,7 +125,6 @@ void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
                 hit = 1;
             }
         }
-
         float perpWallDist;
         if (ray.wallFace == 'E' || ray.wallFace == 'W')
         {
@@ -181,10 +180,8 @@ void render(camera_t *camera, char **map, int mapWidth, int mapHeight, t_s *s)
 
 //fonction pour mettre les variable de t_s dans les variables spécifiques au raycast
 
-void	cast_rays(t_s *s)
+void cast_rays(t_s *s)
 {
-	int mapWidth = s->map->map_len;
-	int mapHeight = s->map->map_lenght;
-	camera_t camera = { { s->player->y / TILE_SIZE, s->player->x / TILE_SIZE }, { s->player->player_angle, -1.0 } };
-	render(&camera, s->map->map, mapWidth, mapHeight, s);
+    camera_t camera = { { s->player->y / TILE_SIZE, s->player->x / TILE_SIZE }, { s->player->player_angle, -1.0 } };
+    render(&camera, s->map->map, s);
 }

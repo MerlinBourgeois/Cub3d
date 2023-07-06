@@ -1,46 +1,5 @@
 #include "cub3d.h"
 
-
-
-t_path_return *remove_useless_nodes(int *x, int *y, int num_nodes, char **map, int **distances)
-{
-    int i, j;
-	t_path_return *new_moves;
-
-	new_moves = malloc(1 * sizeof(t_path_return));
-	new_moves->x = malloc(num_nodes * sizeof(int));
-	new_moves->y = malloc(num_nodes * sizeof(int));
-    for (i = 0; i < num_nodes-2; i++) 
-	{
-        if (distances[x[i+1]][y[i+1]] == distances[x[i]][y[i]] + 1)
-		{
-            // check if there is a straight line between node i and node i+2
-            if ((x[i+2] == x[i] && y[i+2] == y[i+1]) || (x[i+2] == x[i+1] && y[i+2] == y[i]))
-			{
-                // if yes, remove node i+1
-                for (j = i+1; j < num_nodes-1; j++)
-				{
-                    x[j] = x[j+1];
-                    y[j] = y[j+1];
-                }
-                num_nodes--;
-                i--;
-            }
-        }
-    }
-    // print the new path
-    printf("New path: ");
-    for (i = 0; i < num_nodes; i++) {
-        printf("(%d,%d) ", x[i], y[i]);
-    }
-    printf("\n");
-	new_moves->x = x;
-	new_moves->y = y;
-	new_moves->moves = num_nodes;
-	return(new_moves);
-}
-
-
 t_path_return *simplify_path(char **map, int *x, int *y, int path_length)
 {
     int i, j, k;

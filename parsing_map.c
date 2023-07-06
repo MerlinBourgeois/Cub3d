@@ -6,7 +6,7 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:49:47 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/03/12 20:01:08 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/24 17:34:12 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,26 @@ void	ft_put_file_table4(t_verif *verif, t_map *map_struct)
 	}
 }
 
+int	ft_find_my_str(char *s, int i)
+{
+	int j;
+
+	j = 0;
+	while (j != i)
+	{
+		if (s[j] && s[j + 1] && s[j] == '.' && s[j + 1] == '/')
+			return(1);
+		j++;
+	}
+	return (0);
+}
+
 void	ft_put_file_table3(t_verif *verif, t_map *map_struct)
 {
 	if (ft_strncmp(verif->line, "EA ", 3) == 0)
 	{
+		if (!ft_find_my_str(verif->line, ft_strlen(verif->line)))
+			ft_error("Bad texture name");
 		map_struct->east_texture = ft_strnstr(verif->line,
 				"./", ft_strlen(verif->line));
 		map_struct->east_texture[ft_strlen(map_struct->east_texture)
@@ -82,8 +98,13 @@ void	ft_put_file_table3(t_verif *verif, t_map *map_struct)
 
 void	ft_put_file_table2(t_verif *verif, t_map *map_struct)
 {
+	int i;
+
+	i = 0;
 	if (ft_strncmp(verif->line, "NO ", 3) == 0)
 	{
+		if (!ft_find_my_str(verif->line, ft_strlen(verif->line)))
+			ft_error("Bad texture name");
 		map_struct->north_texture = ft_strnstr(verif->line, "./",
 				ft_strlen(verif->line));
 		map_struct->north_texture[ft_strlen(map_struct->north_texture)
@@ -91,7 +112,9 @@ void	ft_put_file_table2(t_verif *verif, t_map *map_struct)
 		verif->instruct++;
 	}
 	else if (ft_strncmp(verif->line, "SO ", 3) == 0)
-	{
+	{		
+		if (!ft_find_my_str(verif->line, ft_strlen(verif->line)))
+			ft_error("Bad texture name");
 		map_struct->south_texture = ft_strnstr(verif->line, "./",
 				ft_strlen(verif->line));
 		map_struct->south_texture[ft_strlen(map_struct->south_texture)
@@ -100,6 +123,8 @@ void	ft_put_file_table2(t_verif *verif, t_map *map_struct)
 	}
 	else if (ft_strncmp(verif->line, "WE ", 3) == 0)
 	{
+		if (!ft_find_my_str(verif->line, ft_strlen(verif->line)))
+			ft_error("Bad texture name");
 		map_struct->west_texture = ft_strnstr(verif->line, "./",
 				ft_strlen(verif->line));
 		map_struct->west_texture[ft_strlen(map_struct->west_texture)
@@ -108,7 +133,7 @@ void	ft_put_file_table2(t_verif *verif, t_map *map_struct)
 	}
 }
 
-int	ft_put_file_table(int fd, char **argv, t_map *map_struct)
+int	ft_put_file_table(int fd, t_map *map_struct)
 {
 	t_verif	verif;
 

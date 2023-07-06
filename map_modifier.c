@@ -6,7 +6,7 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 18:26:19 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/03/13 18:51:08 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/16 11:58:17 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,9 @@ void	space_to_one(t_map *map)
 	int i;
 	int j;
 	int long_line_len;
-	int line_len;
 
 	i = 0;
 	long_line_len = 0;
-	line_len = 0;
 	while (map->map[i])
 	{
 		j = 0;

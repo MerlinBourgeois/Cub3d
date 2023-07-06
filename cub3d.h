@@ -41,6 +41,9 @@
 # define STEP_ANGLE FOV / CASTED_RAYS
 # define SCALE (SCREEN_WIDTH / 2) / CASTED_RAYS
 
+#define SPRITE_WIDTH 64
+#define SPRITE_HEIGHT 64
+
 /*
 *	Includes
 */
@@ -66,6 +69,17 @@ typedef enum e_directions
 	WEST = 0,
 	ESC = 53,
 }	t_directions;
+
+/*
+*	structure de gestion de ben
+*/
+
+typedef struct s_sprite
+{
+    float x;
+    float y;
+    float distance;
+} t_sprite;
 
 /*
 *	structure de gestion des event clavier
@@ -199,6 +213,7 @@ typedef struct	s_s
 	long long start_time;
 	float delta_time;
 	float rotation_speed;
+	t_sprite ben;
 }	t_s;
 
 
@@ -280,7 +295,7 @@ typedef struct {
 *	Parsing_map.c
 */
 
-int	ft_put_file_table(int fd, char **argv, t_map *map_struct);
+int	ft_put_file_table(int fd, t_map *map_struct);
 
 /*
 *	Verif_shape.c
@@ -361,5 +376,18 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 
 void	cast_rays(t_s *s);
 t_xpm	textures_init(t_s *s, char *path);
+
+/*
+*	sprite.c
+*/
+
+void draw_ben(t_s *s, int sprite_x, int sprite_y);
+void	find_ben(t_s *s);
+
+/*
+*	sprites.c
+*/
+
+t_sprite sprite_init(t_s *s, char *path);
 
 #endif

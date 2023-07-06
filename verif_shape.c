@@ -6,7 +6,7 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:04:13 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/03/12 17:16:20 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/16 11:54:06 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,10 @@ int	ft_verif_map_shape2(t_map *map, int i, int j)
 	if (map->map[i][j] == '0')
 	{
 		if (ft_strlen(map->map[i - 1]) < ft_strlen(map->map[i]) && j
-			> ft_strlen(map->map[i - 1]) - 1)
+			> (int)ft_strlen(map->map[i - 1]) - 1)
 			return (0);
 		if (ft_strlen(map->map[i + 1]) < ft_strlen(map->map[i]) && j
-			> ft_strlen(map->map[i + 1]) - 1)
+			> (int)ft_strlen(map->map[i + 1]) - 1)
 			return (0);
 	}
 	return (1);

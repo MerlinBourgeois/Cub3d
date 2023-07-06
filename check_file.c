@@ -6,7 +6,7 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 20:16:18 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/03/12 20:40:15 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/16 11:55:31 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ t_map	check_map(int fd, char **argv)
 	t_map	map;
 
 	map.map = ft_allocate_table(fd, &map,
-			ft_put_file_table(fd, argv, &map), argv);
+			ft_put_file_table(fd, &map), argv);
 	ft_verif_char_map(&map);
 	return (map);
 }

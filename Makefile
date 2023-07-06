@@ -14,7 +14,8 @@ SRC =	main.c \
 		path_finding3.c \
 		path_finding4.c \
 		utils_path_finding.c \
-		raycast.c
+		raycast.c \
+		sprite.c
 
 OBJ = ${SRC:.c=.o}
 

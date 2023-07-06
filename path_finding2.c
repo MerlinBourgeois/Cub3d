@@ -6,7 +6,7 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/15 18:00:16 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/04/11 12:22:03 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/04/16 12:00:11 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,8 @@ t_map_corr *ft_path_finding_map_update(t_map_verif *map, t_map_corr *chain)
 
 t_path_return *ft_path_finding2(t_map_verif *map, char **map_path, t_map_corr co)
 {
-	int	i;
 	t_map_corr *chain;
 
-	i = 0;
 	map->map_compl = copyStrings(map_path, map->map_y);
 	ft_path_finding_map_locate(map, 'O');
 	map->out_x = map->x;
@@ -120,7 +118,6 @@ t_path_return *ft_path_finding2(t_map_verif *map, char **map_path, t_map_corr co
 t_path_return *ft_path_finding(t_map_verif *map, char **map_path)
 {
 	t_map_corr	co;
-	t_map_corr *chain;
 	t_path_return *coord;
 
 	co.next = NULL;

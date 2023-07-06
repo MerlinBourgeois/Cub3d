@@ -6,29 +6,32 @@
 /*   By: merlinbourgeois <merlinbourgeois@studen    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 21:15:42 by merlinbourg       #+#    #+#             */
-/*   Updated: 2023/04/16 11:01:44 by merlinbourg      ###   ########.fr       */
+/*   Updated: 2023/06/27 20:54:04 by merlinbourg      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-long long getCurrentMicroseconds() {
-    struct timespec currentTime;
+long long	get_current_microseconds(void)
+{
+    struct timespec	currentTime;
     clock_gettime(CLOCK_MONOTONIC, &currentTime);
-    return currentTime.tv_sec * 1e6 + currentTime.tv_nsec / 1e3;
+    return (currentTime.tv_sec * 1e6 + currentTime.tv_nsec / 1e3);
 }
 
 void	load_textures(t_s *s)
 {
-	s->xpm = malloc(4 * sizeof(t_xpm));
-	s->map->north_texture = "backroom_texture.xpm";
-	s->map->south_texture = "wall.xpm";
-	s->map->east_texture = "ground.xpm";
-	s->map->west_texture = "backroom_texture.xpm";
+	s->xpm = malloc(7 * sizeof(t_xpm));
+	// s->map->north_texture = "backroom_texture.xpm";
+	// s->map->south_texture = "wall.xpm";
+	// s->map->east_texture = "ground.xpm";
+	// s->map->west_texture = "backroom_texture.xpm";
+	printf("good texture ? : %s\n", s->map->north_texture);
 	s->xpm[0] = textures_init(s, s->map->north_texture);
 	s->xpm[1] = textures_init(s, s->map->south_texture);
 	s->xpm[2] = textures_init(s, s->map->east_texture);
 	s->xpm[3] = textures_init(s, s->map->west_texture);
+	s->xpm[4] = textures_init(s, "ben.xpm");
 }
 
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
@@ -91,7 +94,7 @@ void	draw_big_line(t_s *s, int x0, int y0, int x1, int y1, int thick)
 	}
 }
 
-void draw_circle(t_s *s, int x0, int y0, int radius, int color)
+void draw_circle(t_s *s, int x0, int y0, int radius)
 {
     for (int y = -radius; y <= radius; y++)
     {
@@ -182,8 +185,6 @@ void	better_minimap(t_s *s)
 {
 	int	x;
 	int	y;
-	int	xo;
-	int	yo;
 	int i;
 	int fill_minimap_x;
 	int fill_minimap_y;
@@ -193,8 +194,6 @@ void	better_minimap(t_s *s)
 
 	x = 0;
 	y = 0;
-	yo = 0;
-	xo = 0;
 	x_tile_size = s->player->x / TILE_SIZE;
 	y_tile_size = s->player->y / TILE_SIZE;
 	s->map->def_y = MINIMAP_X;
@@ -282,7 +281,7 @@ void	better_minimap(t_s *s)
 		s->map->map[(int)(x_tile_size)][(int)(y_tile_size)] = 'N';
 	}
 	s->p->color = 0x0FFFFF0;
-	draw_circle(s, (s->map->def_x), (s->map->def_y), 5, 0xFFFFFFFF);
+	draw_circle(s, (s->map->def_x), (s->map->def_y), 5);
 	draw_line_minimap(s, (s->map->def_y), (s->map->def_x), (s->map->def_y) + s->player->delta_y * 5, (s->map->def_x) + s->player->delta_x * 5);
 }
 
@@ -291,7 +290,7 @@ void	draw_map_2d(t_s *s)
 	better_minimap(s);
 }
 
-void	display_ceiling_floor(t_data img, void *mlx, t_map *map)
+void	display_ceiling_floor(t_data img, t_map *map)
 {
 	int i;
 	int j;
@@ -339,7 +338,7 @@ void	ft_allocate_struct(t_s *s)
 	}
 }
 
-int is_wall(char **map, float y, float x, int mapWidth, int mapHeight)
+int is_wall(char **map, float y, float x)
 {
     int intX = (int)floorf(x);
     int intY = (int)floorf(y);
@@ -392,7 +391,6 @@ void update_player_movement(t_s *s, double delta_time)
         s->player->delta_x = (cos(s->player->player_angle) * 2);
         s->player->delta_y = (sin(s->player->player_angle) * 2);
     }
-
     if (s->key_states.west == true)
     {
         s->player->player_angle += PI / 60 * delta_time * 1.0;
@@ -405,22 +403,37 @@ void update_player_movement(t_s *s, double delta_time)
     }
     if (s->key_states.north == true)
     {
-        if (!is_wall(s->map->map, ((s->player->x + s->player->delta_x) / 20 + COLLISION_MARGIN), ((s->player->y + s->player->delta_y) / 20 + COLLISION_MARGIN), s->map->map_len, s->map->map_lenght))
+        if (!is_wall(s->map->map, ((s->player->x + s->player->delta_x) / 20 + COLLISION_MARGIN), ((s->player->y + s->player->delta_y) / 20 + COLLISION_MARGIN)))
         {
             s->player->x += s->player->delta_x / 2;
             s->player->y += s->player->delta_y / 2;
         }
+		else if (!is_wall(s->map->map, ((s->player->x + s->player->delta_x) / 20 + COLLISION_MARGIN), (s->player->y / 20 + COLLISION_MARGIN)))
+        {
+            s->player->x += s->player->delta_x / 4;
+        }
+		else if (!is_wall(s->map->map, s->player->x / 20 + COLLISION_MARGIN, ((s->player->y + s->player->delta_y) / 20 + COLLISION_MARGIN)))
+        {
+            s->player->y += s->player->delta_y / 4;
+        }
     }
     if (s->key_states.south == true)
     {
-        if (!is_wall(s->map->map, ((s->player->x - s->player->delta_x) / 20 - COLLISION_MARGIN), ((s->player->y - s->player->delta_y) / 20 - COLLISION_MARGIN), s->map->map_len, s->map->map_lenght))
+        if (!is_wall(s->map->map, ((s->player->x - s->player->delta_x) / 20 - COLLISION_MARGIN), ((s->player->y - s->player->delta_y) / 20 - COLLISION_MARGIN)))
         {
             s->player->x -= s->player->delta_x / 2;
             s->player->y -= s->player->delta_y / 2;
         }
+		else if (!is_wall(s->map->map, s->player->x / 20 - COLLISION_MARGIN, ((s->player->y - s->player->delta_y) / 20 - COLLISION_MARGIN)))
+        {
+            s->player->y -= s->player->delta_y / 4;
+        }
+		else if (!is_wall(s->map->map, ((s->player->x - s->player->delta_x) / 20 - COLLISION_MARGIN), (s->player->y / 20 - COLLISION_MARGIN)))
+        {
+            s->player->x -= s->player->delta_x / 4;
+        }
     }
 }
-
 
 const int NUM_FRAMES_TO_MEASURE = 10;
 int frameCounter = 0;
@@ -433,17 +446,19 @@ int	paint_frame(t_s *s)
 	update_player_movement(s, 0.5);
 	s->player->delta_x = cos(s->player->player_angle) * 5;
 	s->player->delta_y = sin(s->player->player_angle) * 5;
-	display_ceiling_floor(*s->img, s->p, s->map);
+	display_ceiling_floor(*s->img, s->map);
 	cast_rays(s);
 	draw_map_2d(s);
+	//draw_ben(s, s->player->x, s->player->y);
+	mlx_put_image_to_window(s->p->mlx, s->p->mlx_win, s->xpm[4].img, 150, 150);
 	mlx_put_image_to_window(s->p->mlx, s->p->mlx_win, s->img->img, 0, 0);
 	frameCounter++;
 	if (frameCounter >= NUM_FRAMES_TO_MEASURE) {
-		elapsedTime = getCurrentMicroseconds() - s->start_time;
+		elapsedTime = get_current_microseconds() - s->start_time;
 		fps = (double)frameCounter / (elapsedTime / 1e6);
 		// Réinitialiser le compteur et le temps de départ pour la prochaine mesure
 		frameCounter = 0;
-		s->start_time = getCurrentMicroseconds();
+		s->start_time = get_current_microseconds();
 	}
 	mlx_string_put(s->p->mlx, s->p->mlx_win, SCREEN_WIDTH - 40, SCREEN_HEIGHT - 40, 0xFFFF00FF, ft_itoa((int)fps));
 	return (0);
@@ -478,7 +493,7 @@ void	display_window(t_map *map)
 								&s.img->endian);
 
 							
-	s.start_time = getCurrentMicroseconds();
+	s.start_time = get_current_microseconds();
 	
 	load_textures(&s);
 	mlx_hook(s.p->mlx_win, 3, 1L<<0, relase_key_hook, &s);
